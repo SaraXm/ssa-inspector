@@ -1,0 +1,49 @@
+S1 Photograph classification rules
+==================================
+
+The internal labels No damage and Slight damage are merged into the Intact class, while
+moderate, severe and collapse reference grades are mapped to Damaged. Cases with
+insufficient visual evidence were referred to engineers for more detailed inspection.
+
+Agent 2 reports findings; code validates them and assigns each finding an accepted,
+excluded or uncertain disposition. Its proposed_class does not determine the photograph
+class. Apply the following rules in order to a valid finding.
+
+First, an uncertain assessment gives an uncertain disposition. Otherwise, non_damage is
+excluded; otherwise, unknown severity is uncertain. Apply the matrix below to the
+remaining valid damage findings, whose severity is slight or severe.
+
+Structural elements are wall, column, beam, opening_edge, building_corner and
+wall_junction. The following matrix applies after the preceding checks.
+
+Finding kind            Structural element  Floor or ground  Roof            Unknown
+----------------------  ------------------  ---------------  --------------  ---------
+crack or spalling       Accepted            Excluded         Uncertain       Uncertain
+crushing or separation  Accepted            Uncertain        Uncertain       Uncertain
+debris or collapse      Ownership rule      Ownership rule   Ownership rule  Uncertain
+other                   Uncertain           Uncertain        Uncertain       Uncertain
+
+Ownership rule: debris or collapse is accepted when belongs_to_building is true,
+excluded when false, and uncertain when null. Cables, shadows, vegetation, mortar
+joints, construction joints and surface patterns cannot be confirmed as damage; a reply
+that assigns assessment = damage to one of these kinds is invalid.
+
+Photograph class, by priority (the first matching condition applies)
+
+1. At least one accepted finding has severity severe
+   Photograph class: Severe damage
+
+2. Otherwise, at least one accepted finding has severity slight
+   Photograph class: Slight damage
+
+3. Otherwise, no uncertain finding, clear_view = true and clean_surface_evidence = true
+   Photograph class: No damage
+
+4. Otherwise
+   Photograph class: null
+
+Excluded findings never set the class. Uncertain findings prevent No damage but do not
+override an accepted Slight or Severe finding. A fine superficial finish crack without
+structural involvement can therefore yield Slight damage and map to Intact. Positive
+clean-surface evidence is required for No damage, rather than for every Intact
+prediction.

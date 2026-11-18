@@ -1,0 +1,55 @@
+S2 Building synthesis and response validation
+=============================================
+
+A photograph is valid for building synthesis when its Agent 2 case is complete,
+including a complete case with a null class. With no valid photograph, the building
+receives no class. With one valid photograph, its decision, including null, passes
+through to the building. With multiple valid photographs, Agent 3 receives their
+originals and overlays, together with photograph IDs, validated findings, classes,
+evidence flags, rationales and limitations; it receives no crops.
+
+Agent 3 supplies the building class through visible_damage_class. It may return Slight
+damage, Severe damage or null even when this differs from the most severe photograph
+class. The maximum photograph class is retained only as a diagnostic baseline. Agent 3
+can return No damage only when every supplied photograph has clear_view = true,
+clean_surface_evidence = true and photograph class No damage. It cannot alter the
+photograph findings or their dispositions.
+
+No inspector notes were supplied in the evaluated configuration. The event-specific
+branch was therefore inactive, earthquake_damage_class was constrained to null, and the
+final decision used visible condition. The unchanged prompts and schemas retain fields
+for that inactive branch.
+
+A building abstains when no valid visual evidence exists, Agent 3 returns null, or the
+synthesis request or response fails validation. Request failures, missing or non-JSON
+replies and evidence-preparation failures also produce no decision. Abstentions count as
+errors in the reported evaluation. The needs_review flag records caution and does not
+itself suppress a non-null class; it must not be counted as referral.
+
+Agent 2 validation
+------------------
+
+All schema fields are required and extra fields are rejected. Findings require unique
+nonempty IDs and nonempty rationales. Bounding boxes must contain finite normalized
+coordinates in the full original image, with left < right and top < bottom. Boolean and
+enum fields must have the declared types and values; limitations must be a list of
+strings and physical_width_mm must be null. The top-level rationale must be nonempty.
+
+Cross-field checks require non_damage to use severity = none and apparent_width =
+not_applicable; other assessments cannot use severity = none. Nuisance kinds cannot use
+assessment = damage. Attribution other than undetermined requires a basis other than
+none. A violation rejects the entire photograph reply.
+
+Agent 3 validation
+------------------
+
+The reply must contain exactly the declared fields, permitted classes and enum values, a
+nonempty rationale, a Boolean needs_review and null physical_width_mm. Conflicts and
+limitations must be lists of nonempty strings. Evidence must be nonempty; each item must
+contain exactly claim, source_photo_id and finding_ids, use a supplied photograph ID,
+give a nonempty claim, and cite only distinct finding IDs belonging to that photograph.
+The No damage eligibility check is enforced again in code. A non-null
+earthquake_damage_class is rejected in the evaluated configuration. Mask triage is used
+to display accepted, excluded and uncertain regions after classification; it does not
+change the class. Missing or unresolved photographs and disagreement with the diagnostic
+baseline add review reasons without automatically removing a class.

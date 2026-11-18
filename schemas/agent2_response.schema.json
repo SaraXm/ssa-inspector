@@ -1,0 +1,190 @@
+{
+  "type": "object",
+  "properties": {
+    "proposed_class": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "No damage",
+            "Severe damage",
+            "Slight damage"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "clear_view": {
+      "type": "boolean"
+    },
+    "clean_surface_evidence": {
+      "type": "boolean"
+    },
+    "earthquake_attribution": {
+      "type": "string",
+      "enum": [
+        "pre_existing_supported",
+        "supported",
+        "undetermined"
+      ]
+    },
+    "attribution_basis": {
+      "type": "string",
+      "enum": [
+        "inspector_note",
+        "none",
+        "visual_only"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "cable",
+              "collapse",
+              "construction_joint",
+              "crack",
+              "crushing",
+              "debris",
+              "mortar_joint",
+              "other",
+              "separation",
+              "shadow",
+              "spalling",
+              "surface_pattern",
+              "vegetation"
+            ]
+          },
+          "location": {
+            "type": "string",
+            "enum": [
+              "beam",
+              "building_corner",
+              "column",
+              "floor",
+              "ground",
+              "opening_edge",
+              "roof",
+              "unknown",
+              "wall",
+              "wall_junction"
+            ]
+          },
+          "assessment": {
+            "type": "string",
+            "enum": [
+              "damage",
+              "non_damage",
+              "uncertain"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "none",
+              "severe",
+              "slight",
+              "unknown"
+            ]
+          },
+          "apparent_width": {
+            "type": "string",
+            "enum": [
+              "fine",
+              "gaping",
+              "not_applicable",
+              "open",
+              "unresolved"
+            ]
+          },
+          "attribution": {
+            "type": "string",
+            "enum": [
+              "pre_existing_supported",
+              "supported",
+              "undetermined"
+            ]
+          },
+          "attribution_basis": {
+            "type": "string",
+            "enum": [
+              "inspector_note",
+              "none",
+              "visual_only"
+            ]
+          },
+          "belongs_to_building": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "bbox",
+          "kind",
+          "location",
+          "assessment",
+          "severity",
+          "apparent_width",
+          "attribution",
+          "attribution_basis",
+          "belongs_to_building",
+          "rationale"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "rationale": {
+      "type": "string"
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "physical_width_mm": {
+      "type": "null"
+    }
+  },
+  "required": [
+    "proposed_class",
+    "clear_view",
+    "clean_surface_evidence",
+    "earthquake_attribution",
+    "attribution_basis",
+    "findings",
+    "rationale",
+    "limitations",
+    "physical_width_mm"
+  ],
+  "additionalProperties": false
+}

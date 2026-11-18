@@ -1,0 +1,58 @@
+S3 Segmentation and model settings
+==================================
+
+Agent 1 supplies candidate locations rather than damage labels. Only the SAM 3 output is
+used by the assessment stages. The original image remains available so that Agent 2 can
+inspect regions that segmentation missed.
+
+SAM 3 release
+    facebook/sam3; revision 3c879f39826c281e95690f02c7821c4de09afae7
+
+SAM 3 runtime
+    Python 3.11.9, transformers 5.14.1, torch 2.13.0+cu126, device cuda
+
+Segmentation prompts
+    building_body: “building”; wall: “wall”; crack: “crack”; spalling: “plaster fallen
+    off exposing brick”; debris: “rubble”
+
+Preprocessing
+    Apply available EXIF orientation; convert to RGB. Resize to 1008 × 1008 pixels using
+    bilinear interpolation; rescale by 0.00392156862745098; normalize with mean [0.5,
+    0.5, 0.5] and standard deviation [0.5, 0.5, 0.5].
+
+Thresholds
+    Retain instances with score > 0.30 for every prompt. Resize mask probabilities to
+    original dimensions by bilinear interpolation and retain pixels > 0.50.
+
+Mask processing
+    Drop empty instances and take the union within each class. No morphological
+    filtering, minimum-area removal or hole filling.
+
+Agent 2 crops
+    Take up to 6 largest edge-connected components from crack, spalling and debris
+    masks. Pad each box by max(16 pixels, ceil(0.1 × longer box side)); clip to the
+    original image. Merge boxes at intersection-over-union ≥ 0.5; discard a crop or
+    merged box that overlaps the full frame at this threshold. Crops retain native
+    pixels.
+
+Visual input
+    Agent 2: original, overlay and crops. Agent 3: original and overlay of every valid
+    photograph. Overlay opacity 0.45; class colours distinguish candidate types.
+
+Language model
+    gemini-3.8-flash for both agents; Gemini Batch API; one request per photograph and
+    one per building requiring synthesis.
+
+Generation
+    Thinking HIGH; thought summaries disabled; ULTRA_HIGH per image; maximum output
+    65,536 tokens; application/json with the response schema.
+
+Sampling
+    Temperature, top-p, top-k and generation seed were not set. Service defaults
+    applied; their numeric values and a more specific hosted-model build were not
+    recorded. Identical requests are not guaranteed to reproduce identical predictions.
+
+The source configuration was frozen on 2026-10-08. SAM 3 numerical precision was not
+explicitly recorded. The prompt’s nominal 1 mm boundary is not a measured threshold
+applied to these unscaled images; severity uses visual morphology, and physical_width_mm
+remains null.

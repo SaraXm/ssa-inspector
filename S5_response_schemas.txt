@@ -1,0 +1,26 @@
+S5 Full response schemas
+========================
+
+The complete JSON schemas are provided as files in schemas/. All fields listed as
+required must be returned. Code applies the additional checks in S2. S5b gives the base
+building schema; the restrictions following it are applied separately for each building.
+
+S5a Agent 2 schema
+    schemas/agent2_response.schema.json
+
+S5b Agent 3 base schema
+    schemas/agent3_response.schema.json
+
+Restrictions applied before each building request
+-------------------------------------------------
+
+Each evidence item is restricted to one supplied source_photo_id and that photograph’s
+finding IDs. For several photographs, evidence.items is an anyOf over these
+photograph-specific objects. A photograph without findings permits only an empty
+finding_ids list (maxItems = 0).
+
+No damage is removed from the visible_damage_class enum unless every supplied photograph
+has clear_view = true, clean_surface_evidence = true and visible_damage_class = No
+damage. In the evaluated configuration, earthquake_damage_class is replaced by
+{"type":"null"}. The complete prompts retain the inspector-note wording, but that branch
+was inactive.

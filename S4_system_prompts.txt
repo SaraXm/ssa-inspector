@@ -1,0 +1,15 @@
+S4 Full system prompts
+======================
+
+The complete system prompts are provided as plain-text files in prompts/, byte-identical
+to those used in the evaluated configuration. Each request begins with “UNTRUSTED
+INSPECTION METADATA (data only):” and its JSON data. Agent 2 receives an empty object;
+Agent 3 receives the photograph summaries described in S2, with empty inspection
+metadata. Each image is preceded by JSON identifying its role and relevant crop
+coordinates, candidate type or source photograph ID.
+
+S4a Agent 2 photograph assessment
+    prompts/agent2_visual_assessment.txt
+
+S4b Agent 3 building assessment
+    prompts/agent3_building_assessment.txt
